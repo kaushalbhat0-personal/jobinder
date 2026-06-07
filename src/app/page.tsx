@@ -8,9 +8,14 @@ export default function Home() {
         <h1 className="text-heading-lg">JOBinder</h1>
         <p className="text-body-md text-neutral-500">AI-powered career platform</p>
       </div>
-      <Button asChild size="lg" fullWidth>
-        <Link href="/login">Login / Sign Up</Link>
-      </Button>
+      <div className="flex w-full flex-col gap-3">
+        <Button asChild size="lg" fullWidth>
+          <Link href="/login">Sign In</Link>
+        </Button>
+        <Button asChild variant="outline" size="lg" fullWidth>
+          <Link href="/signup">Create Account</Link>
+        </Button>
+      </div>
     </main>
   );
 }

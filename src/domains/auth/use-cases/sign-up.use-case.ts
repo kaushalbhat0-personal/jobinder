@@ -4,30 +4,20 @@ import type { AuthRepository } from '../repositories/auth-repository';
 import type { User } from '../entities/user';
 import { ValidationError } from '@/shared/core/errors';
 
-export class SignInUseCase {
+export class SignUpUseCase {
   constructor(private readonly authRepo: AuthRepository) {}
 
-  async executeWithOAuth(provider: 'google'): Promise<Result<void>> {
-    try {
-      await this.authRepo.signInWithOAuth(provider);
-      return success(undefined);
-    } catch (error) {
-      return failure(error instanceof Error ? error : new ValidationError('OAuth sign-in failed'));
-    }
-  }
-
-  async executeWithPassword(email: string, password: string): Promise<Result<User>> {
+  async execute(email: string, password: string, name: string): Promise<Result<User>> {
+    if (!name || name.trim().length === 0) return failure(new ValidationError('Name is required'));
     if (!email || !email.includes('@'))
       return failure(new ValidationError('Valid email is required'));
     if (!password || password.length < 6)
       return failure(new ValidationError('Password must be at least 6 characters'));
     try {
-      const user = await this.authRepo.signInWithPassword(email, password);
+      const user = await this.authRepo.signUp(email, password, name.trim());
       return success(user);
     } catch (error) {
-      return failure(
-        error instanceof Error ? error : new ValidationError('Invalid email or password'),
-      );
+      return failure(error instanceof Error ? error : new ValidationError('Sign-up failed'));
     }
   }
 }

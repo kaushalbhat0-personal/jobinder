@@ -4,6 +4,7 @@ import { createServerClient } from '@supabase/ssr';
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
+  const type = searchParams.get('type');
 
   if (code) {
     const response = NextResponse.redirect(new URL('/onboarding', origin));
@@ -38,6 +39,10 @@ export async function GET(request: Request) {
 
     if (error) {
       return NextResponse.redirect(new URL('/login?error=auth_failed', origin));
+    }
+
+    if (type === 'recovery') {
+      return NextResponse.redirect(new URL('/auth/reset-password', origin));
     }
 
     return response;

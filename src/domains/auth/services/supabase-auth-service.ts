@@ -22,6 +22,38 @@ export class SupabaseAuthService implements AuthRepository {
     if (error) throw error;
   }
 
+  async signInWithPassword(email: string, password: string): Promise<User> {
+    const { data, error } = await this.client.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    if (!data.user) throw new ValidationError('Sign-in failed');
+    return this.mapSupabaseUser(data.user);
+  }
+
+  async signUp(email: string, password: string, name: string): Promise<User> {
+    const { data, error } = await this.client.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: name, name },
+      },
+    });
+    if (error) throw error;
+    if (!data.user) throw new ValidationError('Sign-up failed');
+    return this.mapSupabaseUser(data.user);
+  }
+
+  async resetPasswordForEmail(email: string): Promise<void> {
+    const { error } = await this.client.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    });
+    if (error) throw error;
+  }
+
+  async updatePassword(newPassword: string): Promise<void> {
+    const { error } = await this.client.auth.updateUser({ password: newPassword });
+    if (error) throw error;
+  }
+
   async verifyOtp(email: string, token: string): Promise<User> {
     const { data, error } = await this.client.auth.verifyOtp({
       email,

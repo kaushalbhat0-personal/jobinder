@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Heading, Text, Button, Input } from '@/shared/ui/atoms';
 import { Card, CardBody, FormField } from '@/shared/ui/molecules';
 import { useAuth } from '@/hooks/use-auth';
@@ -8,15 +9,13 @@ import { useAuth } from '@/hooks/use-auth';
 const googleAuthEnabled = process.env.NEXT_PUBLIC_ENABLE_GOOGLE_AUTH === 'true';
 
 export default function LoginPage() {
-  const [mode, setMode] = useState<'oauth' | 'otp'>(googleAuthEnabled ? 'oauth' : 'otp');
   const [email, setEmail] = useState('');
-  const [linkSent, setLinkSent] = useState(false);
-  const { signInWithGoogle, signInWithOtp, isLoading, error } = useAuth();
+  const [password, setPassword] = useState('');
+  const { signInWithPassword, signInWithGoogle, isLoading, error } = useAuth();
 
-  const handleSendLink = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signInWithOtp(email);
-    setLinkSent(true);
+    await signInWithPassword(email, password);
   };
 
   return (
@@ -70,48 +69,45 @@ export default function LoginPage() {
             </>
           )}
 
-          {mode === 'oauth' && googleAuthEnabled ? (
-            <Button variant="ghost" fullWidth onClick={() => setMode('otp')}>
-              Sign in with Email
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+            <FormField label="Email" required error={undefined}>
+              <Input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isLoading}
+              />
+            </FormField>
+            <FormField label="Password" required error={undefined}>
+              <Input
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={isLoading}
+              />
+            </FormField>
+            <Button type="submit" fullWidth loading={isLoading}>
+              Sign In
             </Button>
-          ) : !linkSent ? (
-            <form onSubmit={handleSendLink} className="flex flex-col gap-3">
+          </form>
+
+          <div className="flex flex-col gap-2">
+            <Link href="/auth/forgot-password" className="text-center">
+              <Text variant="body-sm" className="text-primary-500 hover:underline">
+                Forgot your password?
+              </Text>
+            </Link>
+            <Link href="/signup" className="text-center">
               <Text variant="body-sm" className="text-neutral-500">
-                We&apos;ll send you a secure sign-in link by email
+                Don&apos;t have an account?{' '}
+                <span className="text-primary-500 hover:underline">Sign up</span>
               </Text>
-              <FormField label="Email" required error={undefined}>
-                <Input
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
-              </FormField>
-              <Button type="submit" fullWidth loading={isLoading}>
-                Send Sign-In Link
-              </Button>
-              {googleAuthEnabled && (
-                <Button variant="ghost" fullWidth onClick={() => setMode('oauth')}>
-                  Back to Google Sign In
-                </Button>
-              )}
-            </form>
-          ) : (
-            <div className="flex flex-col gap-3 text-center">
-              <Text variant="body-md" className="text-success-600">
-                Check your email
-              </Text>
-              <Text variant="body-sm" className="text-neutral-500">
-                We sent a sign-in link to <strong>{email}</strong>. Click the link in the email to
-                sign in.
-              </Text>
-              <Button variant="ghost" fullWidth onClick={() => setLinkSent(false)}>
-                Use a different email
-              </Button>
-            </div>
-          )}
+            </Link>
+          </div>
         </CardBody>
       </Card>
     </main>

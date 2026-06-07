@@ -8,6 +8,8 @@ export type AnalyticsEvent =
   | 'user_signed_up'
   | 'user_signed_in'
   | 'user_signed_out'
+  | 'password_reset_requested'
+  | 'password_reset_completed'
   | 'feed_generated'
   | 'profile_updated'
   | 'preferences_changed'

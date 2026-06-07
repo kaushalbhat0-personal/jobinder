@@ -46,6 +46,10 @@ const createMockProfileRepository = (): ProfileRepository => ({
 const createMockAuthRepository = (): AuthRepository => ({
   signInWithOAuth: async () => {},
   signInWithOtp: async () => {},
+  signInWithPassword: async () => ({}) as never,
+  signUp: async () => ({}) as never,
+  resetPasswordForEmail: async () => {},
+  updatePassword: async () => {},
   verifyOtp: async () => ({}) as never,
   signOut: async () => {},
   getSession: async () => null,
