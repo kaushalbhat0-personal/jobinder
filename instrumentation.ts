@@ -5,11 +5,10 @@ export async function register() {
       getEnv();
       console.log('[Startup] Environment validation passed');
     } catch (err) {
-      console.error(
+      console.warn(
         '[Startup] Environment validation failed:',
         err instanceof Error ? err.message : err,
       );
-      process.exit(1);
     }
   }
 }
