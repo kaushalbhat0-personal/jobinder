@@ -2,6 +2,8 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, type ReactNode } from 'react';
+import { ThemeProvider } from '@/shared/lib/theme';
+import { ToastProvider } from '@/shared/ui/molecules/Toast';
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -17,5 +19,11 @@ export function Providers({ children }: { children: ReactNode }) {
       }),
   );
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <ToastProvider>{children}</ToastProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
 }

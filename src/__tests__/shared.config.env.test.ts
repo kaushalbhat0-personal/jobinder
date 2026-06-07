@@ -11,6 +11,7 @@ describe('Environment Validation', () => {
   it('returns validated env when all variables are present', async () => {
     env['NEXT_PUBLIC_SUPABASE_URL'] = 'https://test.supabase.co';
     env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] = 'test-anon-key';
+    env['NEXT_PUBLIC_APP_URL'] = 'https://app.example.com';
     env['DEEPSEEK_API_KEY'] = 'test-deepseek-key';
     env['NODE_ENV'] = 'test';
 
@@ -33,6 +34,7 @@ describe('Environment Validation', () => {
   it('throws on invalid URL', async () => {
     env['NEXT_PUBLIC_SUPABASE_URL'] = 'not-a-url';
     env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] = 'test-anon-key';
+    env['NEXT_PUBLIC_APP_URL'] = 'https://app.example.com';
     env['DEEPSEEK_API_KEY'] = 'test-deepseek-key';
 
     const { getEnv } = await import('@/shared/config/env');
@@ -42,6 +44,7 @@ describe('Environment Validation', () => {
   it('throws on empty key', async () => {
     env['NEXT_PUBLIC_SUPABASE_URL'] = 'https://test.supabase.co';
     env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] = '';
+    env['NEXT_PUBLIC_APP_URL'] = 'https://app.example.com';
     env['DEEPSEEK_API_KEY'] = 'test-deepseek-key';
 
     const { getEnv } = await import('@/shared/config/env');

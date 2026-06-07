@@ -9,3 +9,5 @@ export {
   isAppError,
   handleError,
 } from './errors';
+export { commandBus } from './command-bus';
+export type { CommandMap } from './command-bus';

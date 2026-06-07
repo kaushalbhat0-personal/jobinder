@@ -17,25 +17,40 @@ import type { AuthRepository } from '@/domains/auth/repositories/auth-repository
 
 const createMockResumeRepository = (): ResumeRepository => ({
   findById: async () => null,
-  save: async () => {},
+  findByUserId: async () => null,
+  save: async (r) =>
+    ({ _tag: 'success', value: r, isSuccess: () => true, isFailure: () => false }) as never,
   delete: async () => {},
+  getAnalysis: async () => null,
+  saveAnalysis: async (a) =>
+    ({ _tag: 'success', value: a, isSuccess: () => true, isFailure: () => false }) as never,
 });
 
 const createMockDiscoveryRepository = (): DiscoveryRepository => ({
-  getFeed: async () => [],
-  swipe: async () => {},
+  getFeed: async () => null,
+  saveFeed: async (f) =>
+    ({ _tag: 'success', value: f, isSuccess: () => true, isFailure: () => false }) as never,
+  getActiveSession: async () => null,
+  saveSession: async (s) =>
+    ({ _tag: 'success', value: s, isSuccess: () => true, isFailure: () => false }) as never,
 });
 
 const createMockProfileRepository = (): ProfileRepository => ({
   findById: async () => null,
-  save: async () => {},
+  findByUserId: async () => null,
+  save: async (p) =>
+    ({ _tag: 'success', value: p, isSuccess: () => true, isFailure: () => false }) as never,
+  delete: async () => {},
 });
 
 const createMockAuthRepository = (): AuthRepository => ({
-  signIn: async () => {},
-  signUp: async () => {},
+  signInWithOAuth: async () => {},
+  signInWithOtp: async () => {},
+  verifyOtp: async () => ({}) as never,
   signOut: async () => {},
   getSession: async () => null,
+  getUser: async () => null,
+  onAuthStateChange: () => () => {},
 });
 
 describe('Repository Factory', () => {

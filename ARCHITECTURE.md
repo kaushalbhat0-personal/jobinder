@@ -1305,6 +1305,77 @@ shared/ui/atoms/Button.tsx
 
 ---
 
+## 18. TAILWIND ABSTRACTION RULE
+
+### Rule
+
+No direct Tailwind utility classes inside business components for repeated visual patterns.
+
+```
+// ❌ Bad — Tailwind classes in business component
+<button className="rounded-xl px-4 py-2 bg-primary-500 text-white font-semibold">
+  Apply Now
+</button>
+
+// ✅ Good — shared component with semantic props
+<Button variant="primary" size="md">
+  Apply Now
+</Button>
+```
+
+### Why
+
+Raw Tailwind classes in business components create five problems:
+
+1. **Duplication** — The same `rounded-xl px-4 py-2 bg-primary-500 text-white font-semibold` appears in 15 places. One design change requires 15 edits.
+2. **No semantics** — A `<button>` with 10 utility classes does not communicate intent. A `<Button variant="primary">` does.
+3. **Inconsistent styling** — Developers copy-paste utility combinations with slight variations (rounded-lg vs rounded-xl, px-3 vs px-4), creating visual drift.
+4. **Poor readability** — Business logic drowns in styling noise.
+5. **Hard to audit** — You cannot grep for "all buttons" when buttons are scattered as raw `<button>` elements.
+
+### When Tailwind Classes ARE Allowed
+
+- In `shared/ui/` component implementations (the component owns the styling).
+- In `app/` layout files for one-off structural spacing (margin, padding, grid).
+- In `globals.css` for global theme definitions.
+- Never in domain `components/`, `hooks/`, or `page.tsx` files for repeated patterns.
+
+### Enforcement
+
+- Code review must reject raw `<button>`, `<input>`, `<select>` and similar elements in domain code.
+- Exception: A `<div>` with a single `className` for layout (`flex`, `grid`, `gap-*`, `mx-auto`) is acceptable.
+- Any block of 3+ Tailwind classes on a single element in domain code requires extraction to a shared component.
+
+### Rationale
+
+This rule is what prevents:
+
+```
+JobButton.tsx
+ReferralButton.tsx
+ResumeButton.tsx
+ApplyButton.tsx
+```
+
+From becoming:
+
+```
+// Each file — identical Tailwind classes
+<button className="rounded-xl px-4 py-2 bg-primary-500 text-white font-semibold ...">
+```
+
+Instead of:
+
+```
+// One file
+shared/ui/atoms/Button.tsx
+
+// Business components use it
+<Button variant="primary" />
+```
+
+---
+
 ## 18. PROJECT SETUP TASKS
 
 ### Phase 0 — Scaffolding
