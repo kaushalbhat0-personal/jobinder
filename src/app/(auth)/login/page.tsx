@@ -10,19 +10,13 @@ const googleAuthEnabled = process.env.NEXT_PUBLIC_ENABLE_GOOGLE_AUTH === 'true';
 export default function LoginPage() {
   const [mode, setMode] = useState<'oauth' | 'otp'>(googleAuthEnabled ? 'oauth' : 'otp');
   const [email, setEmail] = useState('');
-  const [otpToken, setOtpToken] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const { signInWithGoogle, signInWithOtp, verifyOtp, isLoading, error } = useAuth();
+  const [linkSent, setLinkSent] = useState(false);
+  const { signInWithGoogle, signInWithOtp, isLoading, error } = useAuth();
 
-  const handleSendOtp = async (e: React.FormEvent) => {
+  const handleSendLink = async (e: React.FormEvent) => {
     e.preventDefault();
     await signInWithOtp(email);
-    setOtpSent(true);
-  };
-
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await verifyOtp(email, otpToken);
+    setLinkSent(true);
   };
 
   return (
@@ -78,10 +72,13 @@ export default function LoginPage() {
 
           {mode === 'oauth' && googleAuthEnabled ? (
             <Button variant="ghost" fullWidth onClick={() => setMode('otp')}>
-              Sign in with Email OTP
+              Sign in with Email
             </Button>
-          ) : !otpSent ? (
-            <form onSubmit={handleSendOtp} className="flex flex-col gap-3">
+          ) : !linkSent ? (
+            <form onSubmit={handleSendLink} className="flex flex-col gap-3">
+              <Text variant="body-sm" className="text-neutral-500">
+                We&apos;ll send you a secure sign-in link by email
+              </Text>
               <FormField label="Email" required error={undefined}>
                 <Input
                   type="email"
@@ -93,7 +90,7 @@ export default function LoginPage() {
                 />
               </FormField>
               <Button type="submit" fullWidth loading={isLoading}>
-                Send OTP
+                Send Sign-In Link
               </Button>
               {googleAuthEnabled && (
                 <Button variant="ghost" fullWidth onClick={() => setMode('oauth')}>
@@ -102,28 +99,18 @@ export default function LoginPage() {
               )}
             </form>
           ) : (
-            <form onSubmit={handleVerifyOtp} className="flex flex-col gap-3">
-              <Text variant="body-sm" className="text-neutral-500">
-                Enter the verification code sent to {email}
+            <div className="flex flex-col gap-3 text-center">
+              <Text variant="body-md" className="text-success-600">
+                Check your email
               </Text>
-              <FormField label="Verification Code" required error={undefined}>
-                <Input
-                  type="text"
-                  placeholder="123456"
-                  value={otpToken}
-                  onChange={(e) => setOtpToken(e.target.value)}
-                  required
-                  disabled={isLoading}
-                  maxLength={6}
-                />
-              </FormField>
-              <Button type="submit" fullWidth loading={isLoading}>
-                Verify & Sign In
+              <Text variant="body-sm" className="text-neutral-500">
+                We sent a sign-in link to <strong>{email}</strong>. Click the link in the email to
+                sign in.
+              </Text>
+              <Button variant="ghost" fullWidth onClick={() => setLinkSent(false)}>
+                Use a different email
               </Button>
-              <Button variant="ghost" fullWidth onClick={() => setOtpSent(false)}>
-                Change Email
-              </Button>
-            </form>
+            </div>
           )}
         </CardBody>
       </Card>
