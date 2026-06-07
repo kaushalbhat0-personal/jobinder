@@ -15,6 +15,7 @@ const EnvSchema = z
     CLAUDE_API_KEY: z.string().optional(),
     GEMINI_API_KEY: z.string().optional(),
     NEXT_PUBLIC_APP_URL: z.string().url(),
+    NEXT_PUBLIC_ENABLE_GOOGLE_AUTH: z.enum(['true', 'false']).default('false'),
     AI_ANALYSIS: z.enum(['true', 'false']).default('true'),
     FEED_GENERATION: z.enum(['true', 'false']).default('true'),
     JOB_PROVIDERS: z.enum(['true', 'false']).default('true'),
