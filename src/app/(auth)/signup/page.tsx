@@ -19,35 +19,21 @@ export default function SignupPage() {
     e.preventDefault();
     setLocalError(null);
 
-    console.log('[SIGNUP PAGE] Submit handler called', {
-      email,
-      name,
-      passwordLength: password.length,
-    });
-
     if (password !== confirmPassword) {
-      console.log('[SIGNUP PAGE] Passwords do not match');
       setLocalError('Passwords do not match');
       return;
     }
 
     if (password.length < 6) {
-      console.log('[SIGNUP PAGE] Password too short');
       setLocalError('Password must be at least 6 characters');
       return;
     }
 
-    console.log('[SIGNUP PAGE] Calling signUp()');
     const result = await signUp(email, password, name);
-    console.log('[SIGNUP PAGE] signUp() returned:', result);
     if (result) {
-      // If user is authenticated after signUp, redirect immediately
-      // Otherwise, show email confirmation message
       if (user) {
-        console.log('[SIGNUP PAGE] User authenticated, redirecting to /onboarding');
         window.location.href = '/onboarding';
       } else {
-        console.log('[SIGNUP PAGE] User not authenticated, showing email confirmation message');
         setEmailSent(true);
       }
     }
