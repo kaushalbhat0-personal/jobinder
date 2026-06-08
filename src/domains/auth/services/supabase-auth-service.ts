@@ -30,6 +30,11 @@ export class SupabaseAuthService implements AuthRepository {
   }
 
   async signUp(email: string, password: string, name: string): Promise<User> {
+    console.log('[AUTH-SERVICE] signUp() called with:', {
+      email,
+      name,
+      passwordLength: password.length,
+    });
     const { data, error } = await this.client.auth.signUp({
       email,
       password,
@@ -37,8 +42,29 @@ export class SupabaseAuthService implements AuthRepository {
         data: { full_name: name, name },
       },
     });
-    if (error) throw error;
-    if (!data.user) throw new ValidationError('Sign-up failed');
+    console.log('[AUTH-SERVICE] Supabase signUp response:', {
+      hasUser: !!data.user,
+      hasSession: !!data.session,
+      error: error?.message,
+    });
+    if (error) {
+      console.error('[AUTH-SERVICE] Supabase signUp error:', error);
+      // Provide better error messages for common scenarios
+      if (
+        error.message.includes('already registered') ||
+        error.message.includes('already exists')
+      ) {
+        throw new ValidationError(
+          'An account with this email already exists. Please sign in instead.',
+        );
+      }
+      throw error;
+    }
+    if (!data.user) {
+      console.error('[AUTH-SERVICE] Supabase signUp returned no user');
+      throw new ValidationError('Sign-up failed. Please try again.');
+    }
+    console.log('[AUTH-SERVICE] signUp() successful, user created:', data.user.id);
     return this.mapSupabaseUser(data.user);
   }
 

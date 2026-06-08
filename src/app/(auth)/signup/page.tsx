@@ -12,29 +12,73 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [localError, setLocalError] = useState<string | null>(null);
-  const { signUp, isLoading, error } = useAuth();
+  const [emailSent, setEmailSent] = useState(false);
+  const { signUp, user, isLoading, error } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError(null);
 
+    console.log('[SIGNUP PAGE] Submit handler called', {
+      email,
+      name,
+      passwordLength: password.length,
+    });
+
     if (password !== confirmPassword) {
+      console.log('[SIGNUP PAGE] Passwords do not match');
       setLocalError('Passwords do not match');
       return;
     }
 
     if (password.length < 6) {
+      console.log('[SIGNUP PAGE] Password too short');
       setLocalError('Password must be at least 6 characters');
       return;
     }
 
+    console.log('[SIGNUP PAGE] Calling signUp()');
     const result = await signUp(email, password, name);
+    console.log('[SIGNUP PAGE] signUp() returned:', result);
     if (result) {
-      window.location.href = '/onboarding';
+      // If user is authenticated after signUp, redirect immediately
+      // Otherwise, show email confirmation message
+      if (user) {
+        console.log('[SIGNUP PAGE] User authenticated, redirecting to /onboarding');
+        window.location.href = '/onboarding';
+      } else {
+        console.log('[SIGNUP PAGE] User not authenticated, showing email confirmation message');
+        setEmailSent(true);
+      }
     }
   };
 
   const displayError = localError || error;
+
+  if (emailSent) {
+    return (
+      <main className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col items-center justify-center gap-6 p-6">
+        <div className="flex flex-col items-center gap-2 text-center">
+          <Heading variant="heading-lg">Check Your Email</Heading>
+          <Text variant="body-md" className="text-neutral-500">
+            We sent a confirmation link to <strong>{email}</strong>
+          </Text>
+        </div>
+        <Card className="w-full">
+          <CardBody className="flex flex-col gap-4 text-center">
+            <Text variant="body-sm" className="text-neutral-500">
+              Click the link in the email to verify your account and complete your registration.
+            </Text>
+            <Link href="/login" className="text-center">
+              <Text variant="body-sm" className="text-primary-500 hover:underline">
+                Return to sign in
+              </Text>
+            </Link>
+          </CardBody>
+        </Card>
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col items-center justify-center gap-6 p-6">

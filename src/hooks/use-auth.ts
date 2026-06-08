@@ -16,12 +16,14 @@ export function useAuth() {
   useEffect(() => {
     store.setLoading(true);
     const unsubscribe = authService.onAuthStateChange((user) => {
+      console.log('[USE-AUTH] onAuthStateChange fired with user:', user);
       store.setUser(user);
       store.setLoading(false);
     });
     authService
       .getSession()
       .then((session) => {
+        console.log('[USE-AUTH] Initial getSession result:', session);
         store.setUser(session?.user ?? null);
         store.setLoading(false);
       })
@@ -68,16 +70,24 @@ export function useAuth() {
   }, []);
 
   const signUp = useCallback(async (email: string, password: string, name: string) => {
+    console.log('[USE-AUTH] signUp() called with:', {
+      email,
+      name,
+      passwordLength: password.length,
+    });
     store.setLoading(true);
     store.setError(null);
     try {
+      console.log('[USE-AUTH] Calling authService.signUp()');
       const user = await authService.signUp(email, password, name);
+      console.log('[USE-AUTH] authService.signUp() returned user:', user);
       store.setUser(user);
       emitAuthEvent(AuthEventTypes.UserSignedUp, { userId: user.id, email: user.email });
       track('user_signed_up', { userId: user.id, email: user.email });
       store.setLoading(false);
       return user;
     } catch (error) {
+      console.error('[USE-AUTH] signUp() failed:', error);
       store.setError(error instanceof Error ? error.message : 'Failed to create account');
       store.setLoading(false);
       return null;
