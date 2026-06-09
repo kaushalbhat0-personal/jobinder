@@ -1,9 +1,11 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { ThemeProvider } from '@/shared/lib/theme';
 import { ToastProvider } from '@/shared/ui/molecules/Toast';
+import { setProfileRepository } from '@/shared/lib/repositories';
+import { SupabaseProfileRepository } from '@/domains/profile/repositories/supabase-profile.repository';
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -18,6 +20,10 @@ export function Providers({ children }: { children: ReactNode }) {
         },
       }),
   );
+
+  useEffect(() => {
+    setProfileRepository(new SupabaseProfileRepository());
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

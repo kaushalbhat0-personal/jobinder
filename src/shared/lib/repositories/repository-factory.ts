@@ -1,6 +1,7 @@
 import type { ResumeRepository } from '@/domains/resume/repositories/resume-repository';
 import type { DiscoveryRepository } from '@/domains/discovery/repositories/discovery-repository';
 import type { ProfileRepository } from '@/domains/profile/repositories/profile-repository';
+import { SupabaseProfileRepository } from '@/domains/profile/repositories/supabase-profile.repository';
 import type { AuthRepository } from '@/domains/auth/repositories/auth-repository';
 
 let resumeRepo: ResumeRepository | null = null;
@@ -36,7 +37,7 @@ export function setProfileRepository(repository: ProfileRepository): void {
 
 export function getProfileRepository(): ProfileRepository {
   if (!profileRepo) {
-    throw new Error('ProfileRepository not initialized. Call setProfileRepository first.');
+    profileRepo = new SupabaseProfileRepository();
   }
   return profileRepo;
 }

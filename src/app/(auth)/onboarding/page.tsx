@@ -7,9 +7,8 @@ import { FormField } from '@/shared/ui/molecules';
 import { useAuth } from '@/hooks/use-auth';
 import { CompleteOnboardingUseCase } from '@/domains/profile/use-cases/complete-onboarding.use-case';
 import type { CareerStage } from '@/domains/profile/entities/user-profile';
-import { success } from '@/shared/core/result';
 import { track } from '@/shared/analytics/track';
-import type { ProfileRepository } from '@/domains/profile/repositories/profile-repository';
+import { getProfileRepository } from '@/shared/lib/repositories';
 
 const ROLES = [
   'Frontend Developer',
@@ -92,13 +91,7 @@ export default function OnboardingPage() {
     setSaving(true);
     setError(null);
     try {
-      const mockRepo: ProfileRepository = {
-        findByUserId: async () => null,
-        findById: async () => null,
-        save: async (profile) => success(profile),
-        delete: async () => {},
-      };
-      const result = await new CompleteOnboardingUseCase(mockRepo).execute(user.id, {
+      const result = await new CompleteOnboardingUseCase(getProfileRepository()).execute(user.id, {
         name: name.trim(),
         careerStage,
         targetRoles,

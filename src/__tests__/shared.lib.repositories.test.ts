@@ -62,11 +62,19 @@ describe('Repository Factory', () => {
     resetRepositories();
   });
 
-  it('throws when getting uninitialized repositories', () => {
+  it('throws when getting uninitialized resume/discovery/auth repositories', () => {
     expect(() => getResumeRepository()).toThrow('not initialized');
     expect(() => getDiscoveryRepository()).toThrow('not initialized');
-    expect(() => getProfileRepository()).toThrow('not initialized');
     expect(() => getAuthRepository()).toThrow('not initialized');
+  });
+
+  it('auto-initializes profile repository when getting without set', () => {
+    const repo = getProfileRepository();
+    expect(repo).toBeDefined();
+    expect(typeof repo.findById).toBe('function');
+    expect(typeof repo.findByUserId).toBe('function');
+    expect(typeof repo.save).toBe('function');
+    expect(typeof repo.delete).toBe('function');
   });
 
   it('returns the set repository instance', () => {
