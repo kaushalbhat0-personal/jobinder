@@ -4,7 +4,7 @@ import type { ResumeRepository } from './resume-repository';
 import { Resume } from '../entities/resume';
 import { ResumeAnalysis } from '../entities/resume-analysis';
 import { InfrastructureError } from '@/shared/core/errors';
-import { createSupabaseBrowserClient } from '@/shared/lib/supabase';
+import { createSupabaseBrowserClient } from '@/shared/lib/supabase/client';
 
 export class SupabaseResumeRepository implements ResumeRepository {
   async findById(id: string): Promise<Resume | null> {

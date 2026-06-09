@@ -3,7 +3,7 @@ import { success, failure } from '@/shared/core/result';
 import type { ResumeStorageContract } from '../contracts/resume-storage.contract';
 import type { ParsedResumeData } from '../contracts/resume-parser.contract';
 import { NotFoundError, InfrastructureError } from '@/shared/core/errors';
-import { createSupabaseBrowserClient } from '@/shared/lib/supabase';
+import { createSupabaseBrowserClient } from '@/shared/lib/supabase/client';
 
 export class SupabaseResumeStorageService implements ResumeStorageContract {
   async storeFile(userId: string, resumeId: string, content: string): Promise<Result<string>> {
