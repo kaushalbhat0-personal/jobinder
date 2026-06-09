@@ -105,7 +105,7 @@ export function useFeed(userId: string | undefined, profile: UserProfile | null)
       const createApp = new CreateApplicationUseCase(appRepo);
 
       await createApp.execute({
-        id: `app-${userId}-${jobId}-${Date.now()}`,
+        id: crypto.randomUUID(),
         userId: userId!,
         jobId,
         company,

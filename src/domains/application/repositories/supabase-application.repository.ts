@@ -93,7 +93,7 @@ export class SupabaseApplicationRepository implements ApplicationRepositoryContr
         applied_date: application.appliedDate.toISOString(),
         last_updated: application.lastUpdated.toISOString(),
       },
-      { onConflict: 'id' },
+      { onConflict: 'user_id,job_id' },
     );
 
     if (error) throw error;
