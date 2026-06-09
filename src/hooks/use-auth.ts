@@ -57,7 +57,7 @@ export function useAuth() {
       });
       track('user_signed_in', { method: 'password', userId: user.id });
       store.setLoading(false);
-      router.push('/onboarding');
+      router.push('/dashboard');
       return user;
     } catch (error) {
       store.setError(error instanceof Error ? error.message : 'Invalid email or password');
