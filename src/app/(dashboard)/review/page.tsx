@@ -6,12 +6,12 @@ import { PageHeader } from '@/shared/ui/organisms';
 import { Heading, Text, Button, Input, Textarea } from '@/shared/ui/atoms';
 import { Card, CardBody, FormField } from '@/shared/ui/molecules';
 import { useAuth } from '@/hooks/use-auth';
-import { InMemoryResumeStorageService } from '@/domains/resume/services/resume-storage.service';
+import { SupabaseResumeStorageService } from '@/domains/resume/services/supabase-resume-storage.service';
 import type { ParsedResumeData } from '@/domains/resume/contracts/resume-parser.contract';
 import { emitProfileEvent } from '@/domains/profile/events/profile-events';
 import { track } from '@/shared/analytics/track';
 
-const storage = new InMemoryResumeStorageService();
+const storage = new SupabaseResumeStorageService();
 
 const emptyData: ParsedResumeData = {
   name: null,
@@ -107,7 +107,7 @@ function ReviewForm() {
       /* analytics is non-critical */
     }
 
-    router.push('/dashboard');
+    router.push('/analysis?auto=true');
   };
 
   if (!resumeId) {

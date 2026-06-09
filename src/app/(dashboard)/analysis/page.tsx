@@ -1,17 +1,18 @@
 'use client';
 
-import { useState, Suspense, use, useMemo } from 'react';
+import { useState, Suspense, use, useMemo, useEffect, useCallback, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { PageHeader, LoadingState } from '@/shared/ui/organisms';
 import { Heading, Text, Button, Badge, ProgressBar } from '@/shared/ui/atoms';
 import { Card, CardBody } from '@/shared/ui/molecules';
 import { useAuth } from '@/hooks/use-auth';
-import { InMemoryResumeStorageService } from '@/domains/resume/services/resume-storage.service';
+import { SupabaseResumeStorageService } from '@/domains/resume/services/supabase-resume-storage.service';
 import { DeepSeekAdapter } from '@/domains/ai/providers/deepseek.adapter';
 import { ResumeAIService } from '@/domains/ai/services/resume-ai.service';
 import { AnalyzeResumeUseCase } from '@/domains/ai/use-cases/analyze-resume.use-case';
 import type { AnalysisOutput } from '@/domains/ai/services/resume-ai.service';
 
-const storage = new InMemoryResumeStorageService();
+const storage = new SupabaseResumeStorageService();
 const provider = new DeepSeekAdapter();
 const aiService = new ResumeAIService(provider);
 const analyzeUseCase = new AnalyzeResumeUseCase(storage, aiService);
@@ -67,6 +68,7 @@ function AtsScoreRing({ score }: { score: number }) {
 
 function AnalysisContent() {
   const { user } = useAuth();
+  const searchParams = useSearchParams();
   const [analysis, setAnalysis] = useState<AnalysisOutput | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -78,7 +80,7 @@ function AnalysisContent() {
   const loadResult = use(loadPromise);
   const snapshot = loadResult?.isSuccess() ? loadResult.value : null;
 
-  const handleAnalyze = async () => {
+  const handleAnalyze = useCallback(async () => {
     if (!user || !snapshot) return;
     setLoading(true);
     setError(null);
@@ -92,7 +94,23 @@ function AnalysisContent() {
 
     setAnalysis(result.value);
     setLoading(false);
-  };
+  }, [user, snapshot]);
+
+  const autoTriggered = useRef(false);
+
+  useEffect(() => {
+    if (
+      snapshot &&
+      searchParams.get('auto') === 'true' &&
+      !analysis &&
+      !loading &&
+      !error &&
+      !autoTriggered.current
+    ) {
+      autoTriggered.current = true;
+      setTimeout(() => handleAnalyze(), 0);
+    }
+  }, [snapshot, searchParams, handleAnalyze, analysis, loading, error]);
 
   if (!user) {
     return (

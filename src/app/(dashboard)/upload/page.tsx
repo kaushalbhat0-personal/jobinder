@@ -9,15 +9,15 @@ import { useAuth } from '@/hooks/use-auth';
 import { UploadResumeUseCase } from '@/domains/resume/use-cases/upload-resume.use-case';
 import { FileReaderService } from '@/domains/resume/services/file-reader.service';
 import { TextResumeParser } from '@/domains/resume/services/text-resume-parser';
-import { InMemoryResumeStorageService } from '@/domains/resume/services/resume-storage.service';
-import { InMemoryResumeRepository } from '@/domains/resume/repositories/in-memory-resume-repository';
+import { SupabaseResumeStorageService } from '@/domains/resume/services/supabase-resume-storage.service';
+import { SupabaseResumeRepository } from '@/domains/resume/repositories/supabase-resume-repository';
 import { useResumeStore } from '@/domains/resume/stores/resume-store';
 import { cn } from '@/shared/utils/cn';
 
 const fileReader = new FileReaderService();
 const parser = new TextResumeParser();
-const storage = new InMemoryResumeStorageService();
-const repo = new InMemoryResumeRepository();
+const storage = new SupabaseResumeStorageService();
+const repo = new SupabaseResumeRepository();
 const uploadUseCase = new UploadResumeUseCase(fileReader, storage, parser, repo);
 
 const ACCEPTED_TYPES = '.pdf,.docx';

@@ -1,9 +1,12 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { PageHeader, EmptyState } from '@/shared/ui/organisms';
 import { Button } from '@/shared/ui/atoms';
 
 export default function ResumePage() {
+  const router = useRouter();
+
   return (
     <>
       <PageHeader title="Resume" description="Manage your resume and review analysis" />
@@ -27,7 +30,11 @@ export default function ResumePage() {
           }
           title="Upload your resume to get started"
           description="Upload your resume for AI-powered analysis, ATS scoring, and actionable feedback to improve your job applications."
-          action={<Button variant="primary">Upload Resume</Button>}
+          action={
+            <Button variant="primary" onClick={() => router.push('/upload')}>
+              Upload Resume
+            </Button>
+          }
         />
       </div>
     </>

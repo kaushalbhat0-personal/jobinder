@@ -91,7 +91,7 @@ export class SupabaseApplicationRepository implements ApplicationRepositoryContr
         role: application.role,
         stage: application.stage,
         applied_date: application.appliedDate.toISOString(),
-        last_updated: application.lastUpdated.toISOString(),
+        updated_at: application.lastUpdated.toISOString(),
       },
       { onConflict: 'user_id,job_id' },
     );
